@@ -20,7 +20,7 @@
 {% endif %}
 </p>
 <p>
-<a href="{% url 'ad_create' %}">Add an Ad</a> |
+<a href="{% url 'ad_create' %}">Create an Ad</a> |
 {% if user.is_authenticated %}
 <a href="{% url 'logout' %}?next={% url 'ads' %}">Logout</a>
 {% else %}
