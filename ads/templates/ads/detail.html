@@ -1,4 +1,4 @@
-{% extends "base_menu.html" %}
+{% extends "base_bootstrap.html" %}
 {% load humanize %} <!-- https://docs.djangoproject.com/en/2.1/ref/contrib/humanize -->
 {% block content %}
 <span style="float: right;">
@@ -9,15 +9,13 @@
 {% endif %}
 </span>
 <h1>{{ ad.title }}</h1>
-<p>
-{{ ad.price }}
-</p>
+{% if ad.content_type %}
+<img style="float:right; max-width:50%;" src="{% url 'ad_picture' ad.id %}">
+{% endif %}
 <p>
 {{ ad.text }}
 </p>
-<img style="float:right; max-width:50%;" src="{% url 'ad_picture' ad.id %}">
 <p>
-    end
 </p>
 <p>
 <a href="{% url 'ads' %}">All ads</a>

@@ -22,7 +22,7 @@ class CreateForm(forms.ModelForm):
 
     class Meta:
         model = Ad
-        fields = ['title', 'text', 'picture']  # Picture is manual
+        fields = ['title', 'price', 'text', 'picture']  # Picture is manual
 
     def clean(self) :
         cleaned_data = super().clean()
@@ -37,7 +37,7 @@ class CreateForm(forms.ModelForm):
         # We only need to adjust picture if it is a freshly uploaded file
         f = instance.picture   # Make a copy
         if isinstance(f, InMemoryUploadedFile):  # Extract data from the form to the model
-            bytearr = f.read();
+            bytearr = f.read()
             instance.content_type = f.content_type
             instance.picture = bytearr  # Overwrite with the actual image data
 
