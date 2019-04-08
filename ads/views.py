@@ -35,11 +35,13 @@ from ads.models import Ad
 from django.views import View
 from django.views import generic
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 
 from ads.util import OwnerListView, OwnerDetailView, OwnerCreateView, OwnerUpdateView, OwnerDeleteView
 
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 from ads.forms import CreateForm
 
 class AdListView(OwnerListView):

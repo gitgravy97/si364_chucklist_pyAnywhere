@@ -10,16 +10,18 @@
 </span>
 <h1>{{ ad.title }}</h1>
 <p>
-{{ ad.price }}
+    {{ ad.price }}
 </p>
 <p>
-{{ ad.text }}
+    {{ ad.text }}
 </p>
+<p>
+    Picture:
+</p>
+<p>
 <img style="float:right; max-width:50%;" src="{% url 'ad_picture' ad.id %}">
-<p>
-    end
 </p>
 <p>
-<a href="{% url 'ads' %}">All ads</a>
+    <a href="{% url 'ads' %}">All ads</a>
 </p>
 {% endblock %}
