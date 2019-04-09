@@ -18,10 +18,29 @@ from django.urls import path
 from django.conf.urls import include, url
 
 urlpatterns = [
-    #path('', include('home.urls')),  # Keep
+    path('home/', include('home.urls')),  # Keep
     path('', include('ads.urls')),
     path('admin/', admin.site.urls),  # Keep
     path('accounts/', include('django.contrib.auth.urls')),  # Keep
     path('ads/', include('ads.urls')),  # Keep
     url(r'^oauth/', include('social_django.urls', namespace='social')),
+]
+
+# Keep everything below this line
+from django.conf import settings
+if 'social_django' in settings.INSTALLED_APPS :
+    urlpatterns += [
+        url(r'^oauth/', include('social_django.urls', namespace='social')),
+    ]
+
+# Serve the favicon
+import os
+from django.views.static import serve
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+urlpatterns += [
+    path('favicon.ico', serve, {
+            'path': 'favicon.ico',
+            'document_root': os.path.join(BASE_DIR, 'home/static'),
+        }
+    ),
 ]
