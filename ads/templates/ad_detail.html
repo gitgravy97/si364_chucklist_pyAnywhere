@@ -12,7 +12,15 @@
 {% endif %}
 {{ ad.title }}
 </h1>
-<!--    -->
+
+<p>{{ ad.price }}</p>
+<p>{{ ad.text }}</p>
+
+<p>Picture (If Available):</p>
+<p>
+    <img style="float:right; max-width:50%;" src="{% url 'ad_picture' ad.id %}">
+</p>
+
 {% if user.is_authenticated %}
 <br clear="all"/>
 <p>

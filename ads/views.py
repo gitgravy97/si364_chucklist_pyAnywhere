@@ -109,3 +109,21 @@ def stream_file(request, pk) :
     response['Content-Length'] = len(ad.picture)
     response.write(ad.picture)
     return response
+
+class CommentCreateView(LoginRequiredMixin, View):
+    def post(self, request, pk) :
+        f = get_object_or_404(Ad, id=pk)
+        comment_form = CommentForm(request.POST)
+
+        comment = Comment(text=request.POST['comment'], owner=request.user, ad=f)
+        comment.save()
+        return redirect(reverse_lazy('ad_detail', args=[pk]))
+
+class CommentDeleteView(OwnerDeleteView):
+    model = Comment
+    template_name = "comment_delete.html"
+
+    # https://stackoverflow.com/questions/26290415/deleteview-with-a-dynamic-success-url-dependent-on-id
+    def get_success_url(self):
+        ad = self.object.ad
+        return reverse_lazy('ad_detail', args=[ad.id])
