@@ -1,6 +1,8 @@
 {% extends "base_menu.html" %}
+{% load crispy_forms_tags %}
 {% load humanize %} <!-- https://docs.djangoproject.com/en/2.1/ref/contrib/humanize -->
 {% block content %}
+
 <span style="float: right;">
 ({{ ad.updated_at|naturaltime }})
 {% if ad.owner == user %}
@@ -8,19 +10,17 @@
 <a href="{% url 'ad_delete' ad.id %}"><i class="fa fa-trash"></i></a>
 {% endif %}
 </span>
+
 <h1>{{ ad.title }}</h1>
+
+
+<p>{{ ad.price }}</p>
+<p>{{ ad.text }}</p>
+<p>Picture:</p>
 <p>
-    {{ ad.price }}
+    <img style="float:right; max-width:50%;" src="{% url 'ad_picture' ad.id %}">
 </p>
-<p>
-    {{ ad.text }}
-</p>
-<p>
-    Picture:
-</p>
-<p>
-<img style="float:right; max-width:50%;" src="{% url 'ad_picture' ad.id %}">
-</p>
+
 <p>
     <a href="{% url 'ads' %}">All ads</a>
 </p>
