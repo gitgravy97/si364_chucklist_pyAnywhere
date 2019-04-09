@@ -30,7 +30,7 @@ def cleanup() :
         print('Deleted',count,' expired ads')
 """
 
-from ads.models import Ad
+from ads.models import Ad, Comment
 
 from django.views import View
 from django.views import generic
@@ -42,7 +42,7 @@ from ads.util import OwnerListView, OwnerDetailView, OwnerCreateView, OwnerUpdat
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from ads.forms import CreateForm
+from ads.forms import CreateForm, CommentForm
 
 class AdListView(OwnerListView):
     model = Ad
