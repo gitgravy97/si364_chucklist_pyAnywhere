@@ -30,7 +30,7 @@ def cleanup() :
         print('Deleted',count,' expired ads')
 """
 
-from ads.models import Ad, Comment
+from ads.models import Ad, Comment, Fav
 
 from django.views import View
 from django.views import generic
@@ -55,8 +55,42 @@ class AdDetailView(OwnerDetailView):
         ad = Ad.objects.get(id=pk)
         comments = Comment.objects.filter(ad=ad).order_by('-updated_at')
         comment_form = CommentForm()
-        context = { 'ad' : ad, 'comments': comments, 'comment_form': comment_form }
+
+        favorites = list()
+        if request.user.is_authenticated:
+            rows = request.user.favorite_ads.values('id')
+            favorites = [ row['id'] for row in rows ]            
+
+        context = { 'ad' : ad, 'comments': comments, 'comment_form': comment_form,
+            'favorites': favorites }
         return render(request, self.template_name, context)
+
+"""
+    def get(self, request) :
+        thing_list = Thing.objects.all()
+        favorites = list()
+        if request.user.is_authenticated:
+            rows = request.user.favorite_things.values('id')
+            favorites = [ row['id'] for row in rows ]
+        ctx = {'thing_list' : thing_list, 'favorites': favorites}
+        return render(request, self.template_name, ctx)
+"""
+####################################################################################################
+"""
+class ThingListView(OwnerListView):
+    model = Thing
+    template_name = "favs/list.html"
+
+    def get(self, request) :
+        thing_list = Thing.objects.all()
+        favorites = list()
+        if request.user.is_authenticated:
+            # rows = [{'id': 2}]  (A list of rows)
+            rows = request.user.favorite_things.values('id')
+            favorites = [ row['id'] for row in rows ]
+        ctx = {'thing_list' : thing_list, 'favorites': favorites}
+        return render(request, self.template_name, ctx)
+"""
 
 class AdCreateView(OwnerCreateView):
     model = Ad
@@ -99,7 +133,6 @@ class AdFormView(LoginRequiredMixin, View):
         ad = form.save(commit=False)
         ad.owner = self.request.user
         ad.save()
-        print("!")
         return redirect(self.success_url)
 
 def stream_file(request, pk) :
@@ -127,3 +160,41 @@ class CommentDeleteView(OwnerDeleteView):
     def get_success_url(self):
         ad = self.object.ad
         return reverse_lazy('ad_detail', args=[ad.id])
+
+# Homework "ChucksList #3" Content
+# https://stackoverflow.com/questions/16458166/how-to-disable-djangos-csrf-validation
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.db.utils import IntegrityError
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AddFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk) :
+        print("Add PK",pk)
+        t = get_object_or_404(Ad, id=pk)
+        fav = Fav(user=request.user, ad=t)
+        print()
+        print("Add Favorite - Attempting . . .")
+        try:
+            fav.save()  # In case of duplicate key
+            print("AddFave Successful, Saved")
+        except IntegrityError as e:
+            print("AddFave Failing")
+            pass
+        return HttpResponse()
+
+@method_decorator(csrf_exempt, name='dispatch')
+class DeleteFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk) :
+        print("Delete PK",pk)
+        t = get_object_or_404(Ad, id=pk)
+        print()
+        print("Delete Favorite - Attempting . . .")
+        try:
+            fav = Fav.objects.get(user=request.user, ad=t).delete()
+            print("DelFave Executed")
+        except Fav.DoesNotExist as e:
+            print("DelFave Failing")
+            pass
+
+        return HttpResponse()
